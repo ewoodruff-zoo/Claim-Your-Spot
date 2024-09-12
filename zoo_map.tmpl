@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	$HEADER$ 
+</head>
+<body>
+	<div style="height: 20%; display: inline-block">
+	    Thank you for all of our existing patrons	
+	    <ul id="patrons">
+		
+	   </ul>
+	</div>
+	<div style="width: 80%; height: 100%;">
+	    $BODY$       
+	</div>
+</body>
+<script>
+	$SCRIPT$
+
+	function addOutlineToRectangle(event){
+		const patronName = event.target.innerHTML;
+		for(const patron of patrons){
+			if(patron.name == patronName) {
+				const rectangle = patron.rectangle;
+				rectangle.options.color = "red";
+				rectangle.options.stroke = true;
+				rectangle.options.weight = 4; 
+				rectangle.remove()
+				rectangle.addTo(mapObj);
+			}
+		}
+	}
+
+	function removeOutline(event) { 
+		const patronName = event.target.innerHTML;
+		for(const patron of patrons){
+			if(patron.name == patronName) {
+				const rectangle = patron.rectangle;
+				rectangle.options.color = "";
+				rectangle.options.stroke = false;
+				rectangle.options.weight = 0; 
+				rectangle.remove()
+				rectangle.addTo(mapObj);
+			}
+		}
+	}
+
+	function panAndZoom(event){
+		const patronName = event.target.innerHTML;
+		const patron = patrons.find((p) => p.name == patronName); // zoom to the first one
+		const rectangle = patron.rectangle;
+		mapObj.zoomIn(3);
+		mapObj.panTo(rectangle.getCenter());
+	}
+
+	function onlyUnique(value, index, array) {
+			return array.map((p) => p.name).indexOf(value.name) === index;
+	}
+
+
+	for(const patron of patrons.filter(onlyUnique)){
+	    const listItem = document.createElement("li");
+		listItem.innerHTML = patron.name;
+		listItem.addEventListener("mouseover", addOutlineToRectangle)
+		listItem.addEventListener("mouseout", removeOutline)
+		listItem.addEventListener("click", panAndZoom);
+	    document.getElementById("patrons").appendChild(listItem)
+	}
+</script>
+</html>
