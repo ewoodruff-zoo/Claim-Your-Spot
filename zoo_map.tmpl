@@ -2,16 +2,111 @@
 <html>
 <head>
 	$HEADER$ 
+<style>
+	@font-face {
+  		font-family: RussoOne;
+  		src: url("fonts/RussoOne-Regular.ttf");
+  		font-display: swap;
+	}
+	@font-face {
+  		font-family: Raleway;
+  		src: url("fonts/Raleway-Regular.ttf");
+  		font-display: swap;
+	}
+	#full_page_container {
+		display: grid;
+		grid-template-columns: 400px auto;
+		grid-template-rows: calc(100vh - 100px) 100px;
+		grid-template-areas:
+			"patrons zoo_map"
+			"zoo_logo zoo_map";
+	}
+    	#patron_list {
+        	overflow: auto;
+		grid-area: patrons;
+		background: black;
+    	}
+	#patron_list p {
+		font-size: xx-large;
+		text-align: center;
+		padding: 20px;
+		color: white;
+		font-family: Raleway;
+	}
+	ul#patrons {
+		font-size: medium;
+		list-style-type: none;
+		width: fit-content;
+	}
+	ul#patrons li {
+		color: white;
+		margin: 5px 0;
+		border-left: 2px solid #062a42;
+		transition: 0.5s;
+		position: relative;
+		left: 0;
+		padding-left: 5px;
+		font-family: RussoOne;
+	}
+	ul#patrons li:hover {
+		border-left: 4px solid #9f1c34;
+		background: #9f1c34;
+		cursor: pointer;
+		left: 10px;
+		color: white;
+	}
+    	#zoo_map {
+        	grid-area: zoo_map;
+    	}
+	#zoo_logo {
+		grid-area: zoo_logo;
+	}
+	#zoo_logo img {
+		height: 100px;
+		width: 400px;
+		object-fit: contain;
+		background: black;
+		padding: 10px;
+	}
+	.leaflet-container {
+		background: #333;
+	}
+	.leaflet-tooltip-pane {
+		font-size: large;
+	}
+	/* This part changes the scrollbar track (the part behind the scrollbar) */
+	::-webkit-scrollbar-track {
+  		background: #1E1E1E; /* Dark grey color, you can choose any color you like */
+	}
+
+	/* This part changes the scrollbar handle */
+	::-webkit-scrollbar-thumb {
+  		background: #555; /* Medium grey color, this is the actual scrollbar */
+	}
+
+	/* You can also change the scrollbar width and height */
+	::-webkit-scrollbar {
+  		width: 12px; /* Width of the vertical scrollbar */
+  		height: 12px; /* Height of the horizontal scrollbar */
+	}
+
+
+</style> 
 </head>
 <body>
-	<div style="height: 20%; display: inline-block">
-	    Thank you for all of our existing patrons	
-	    <ul id="patrons">
+	<div id = "full_page_container">
+		<div id = "patron_list">
+	    		<p>Thank you for all of our existing patrons</p>
+	    	<ul id="patrons">
 		
-	   </ul>
-	</div>
-	<div style="width: 80%; height: 100%;">
-	    $BODY$       
+	   	</ul>
+		</div>
+		<div id = "zoo_map">
+	    		$BODY$       
+		</div>
+		<div id = "zoo_logo">
+			<img src="images/NALZS_2B_Side_stack.png" alt="NALZS Logo">
+		</div>
 	</div>
 </body>
 <script>
@@ -22,7 +117,7 @@
 		for(const patron of patrons){
 			if(patron.name == patronName) {
 				const rectangle = patron.rectangle;
-				rectangle.options.color = "red";
+				rectangle.options.color = "#9f1c34";
 				rectangle.options.stroke = true;
 				rectangle.options.weight = 4; 
 				rectangle.remove()
