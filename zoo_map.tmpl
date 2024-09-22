@@ -48,7 +48,7 @@
 		padding-left: 5px;
 		font-family: RussoOne;
 	}
-	ul#patrons li:hover {
+	ul#patrons li:hover, .patron.hover {
 		border-left: 4px solid #9f1c34;
 		background: #9f1c34;
 		cursor: pointer;
@@ -144,22 +144,47 @@
 		const patronName = event.target.innerHTML;
 		const patron = patrons.find((p) => p.name == patronName); // zoom to the first one
 		const rectangle = patron.rectangle;
-		mapObj.zoomIn(3);
-		mapObj.panTo(rectangle.getCenter());
+		mapObj.flyTo(rectangle.getCenter(), 3);
 	}
 
 	function onlyUnique(value, index, array) {
 			return array.map((p) => p.name).indexOf(value.name) === index;
 	}
 
+	function highlightName(name){
+		return () => {
+			for(const patron of document.getElementsByClassName("patron")){
+				if(patron.innerHTML === name){
+					patron.classList.add("hover")
+				}
+			}
+		};
+	}
+
+	function unhighlightName(name){
+		return () => {
+			for(const patron of document.getElementsByClassName("patron")){
+				if(patron.innerHTML === name){
+					patron.classList.remove("hover")
+				}
+			}
+		};
+	}
 
 	for(const patron of patrons.filter(onlyUnique)){
 	    const listItem = document.createElement("li");
 		listItem.innerHTML = patron.name;
+		listItem.classList.add("patron")
 		listItem.addEventListener("mouseover", addOutlineToRectangle)
 		listItem.addEventListener("mouseout", removeOutline)
 		listItem.addEventListener("click", panAndZoom);
 	    document.getElementById("patrons").appendChild(listItem)
 	}
+
+	for(const patron of patrons) {
+		patron.rectangle.addEventListener("mouseover", highlightName(patron.name));
+		patron.rectangle.addEventListener("mouseout", unhighlightName(patron.name));
+	}
+
 </script>
 </html>
