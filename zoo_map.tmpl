@@ -14,7 +14,11 @@
   		font-display: swap;
 	}
     
-    #full_page_container { display: grid; }
+    #full_page_container { 
+		display: grid;
+		row-gap: 10px;
+		background-color: black;
+	 }
     
     @media only screen and (min-width: 800px) {
         /* Left side of screen 400px */
@@ -54,9 +58,13 @@
     
 	#patron_list p {
 		text-align: center;
-		padding: 20px;
 		color: white;
 		font-family: Raleway;
+	}
+    @media only screen and (min-width: 800px) {
+		#patron_list p {
+			padding: 20px;
+		}
 	}
 	ul#patrons {
 		font-size: medium;
@@ -139,14 +147,19 @@
 		const patronName = event.target.innerHTML;
 		for(const patron of patrons){
 			if(patron.name == patronName) {
-				const rectangle = patron.rectangle;
-				rectangle.options.color = "#9f1c34";
-				rectangle.options.stroke = true;
-				rectangle.options.weight = 4; 
-				rectangle.remove()
-				rectangle.addTo(mapObj);
+				highlightRectangle(patron.rectangle);
 			}
 		}
+	}
+
+	function highlightRectangle(rectangle){
+		removeAllOutlines();
+		rectangle.options.color = "#9f1c34";
+		rectangle.options.stroke = true;
+		rectangle.options.weight = 4; 
+		rectangle.remove()
+		rectangle.addTo(mapObj);
+
 	}
 
 	function removeOutline(event) { 
@@ -154,13 +167,18 @@
 		for(const patron of patrons){
 			if(patron.name == patronName) {
 				const rectangle = patron.rectangle;
-				rectangle.options.color = "";
-				rectangle.options.stroke = false;
-				rectangle.options.weight = 0; 
-				rectangle.remove()
-				rectangle.addTo(mapObj);
+				removeOutlineFromRectangle(rectangle);
 			}
 		}
+	}
+
+	function removeOutlineFromRectangle(rectangle) {
+		rectangle.options.color = "";
+		rectangle.options.stroke = false;
+		rectangle.options.weight = 0; 
+		rectangle.remove()
+		rectangle.addTo(mapObj);
+
 	}
 
 	function panAndZoom(event){
@@ -171,54 +189,62 @@
 	}
 
 	function onlyUnique(value, index, array) {
-			return array.map((p) => p.name).indexOf(value.name) === index;
+		return array.map((p) => p.name).indexOf(value.name) === index;
 	}
 
 	function highlightName(name){
-		return () => {
-			for(const patron of document.getElementsByClassName("patron")){
-				if(patron.innerHTML === name){
-					patron.classList.add("hover")
-				}
+		removeAllHighlights();
+		for(const patron of document.getElementsByClassName("patron")){
+			if(patron.innerHTML === name){
+				patron.classList.add("hover")
 			}
-		};
+		}
 	}
 	
 	function goToPatron(name) { 
-		return () => {
-			for(const patron of document.getElementsByClassName("patron")) {
-				if(patron.innerHTML === name){
-					patronList = document.getElementById("patron_list");
-					patronList.scrollTo({top: patron.offsetTop - patronList.offsetTop - 20, behavior: "smooth"});
-				}
+		highlightName(name);
+		for(const patron of document.getElementsByClassName("patron")) {
+			if(patron.innerHTML === name){
+				patronList = document.getElementById("patron_list");
+				patronList.scrollTo({top: patron.offsetTop - patronList.offsetTop - 20, behavior: "smooth"});
 			}
-		};
+		}
 	}
 
 	function unhighlightName(name){
-		return () => {
-			for(const patron of document.getElementsByClassName("patron")){
-				if(patron.innerHTML === name){
-					patron.classList.remove("hover")
-				}
+		for(const patron of document.getElementsByClassName("patron")){
+			if(patron.innerHTML === name){
+				patron.classList.remove("hover")
 			}
-		};
+		}
+	}
+
+	function removeAllOutlines(){
+		for(const patron of patrons.filter(onlyUnique)){
+			removeOutlineFromRectangle(patron.rectangle);
+		}
+	}
+
+	function removeAllHighlights(){
+		for(const patron of patrons) {
+			unhighlightName(patron.name);
+		}
 	}
 
 	for(const patron of patrons.filter(onlyUnique)){
 	    const listItem = document.createElement("li");
 		listItem.innerHTML = patron.name;
 		listItem.classList.add("patron")
-		listItem.addEventListener("mouseover", addOutlineToRectangle)
-		listItem.addEventListener("mouseout", removeOutline)
-		listItem.addEventListener("click", panAndZoom);
+		listItem.addEventListener("mouseover", addOutlineToRectangle);
+		listItem.addEventListener("touch", (e) => { highlightName(patron.name); highlightRectangle(patron.rectangle); panAndZoom(e); });
+		listItem.addEventListener("click", (e) => { highlightName(patron.name); highlightRectangle(patron.rectangle); panAndZoom(e); });
 	    document.getElementById("patrons").appendChild(listItem)
 	}
 
 	for(const patron of patrons) {
-		patron.rectangle.addEventListener("mouseover", highlightName(patron.name));
-		patron.rectangle.addEventListener("mouseout", unhighlightName(patron.name));
-		patron.rectangle.addEventListener("click", goToPatron(patron.name));
+		patron.rectangle.addEventListener("mouseover", () => { highlightName(patron.name)});
+		patron.rectangle.addEventListener("touch", (e) => { highlightRectangle(patron.rectangle); goToPatron(patron.name); });
+		patron.rectangle.addEventListener("click", (e) => { highlightRectangle(patron.rectangle); goToPatron(patron.name); });
 	}
 
 </script>
