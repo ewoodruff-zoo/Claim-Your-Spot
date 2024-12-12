@@ -243,8 +243,8 @@
 
 	for(const patron of patrons) {
 		patron.rectangle.addEventListener("mouseover", () => { highlightName(patron.name)});
-		patron.rectangle.addEventListener("touch", (e) => { highlightRectangle(patron.rectangle); goToPatron(patron.name); });
-		patron.rectangle.addEventListener("click", (e) => { highlightRectangle(patron.rectangle); goToPatron(patron.name); });
+		patron.rectangle.addEventListener("touch", (e) => { highlightRectangle(patron.rectangle); highlightName(patron.name); goToPatron(patron.name); });
+		patron.rectangle.addEventListener("click", (e) => { highlightRectangle(patron.rectangle); highlightName(patron.name); goToPatron(patron.name); });
 	}
 
 </script>
