@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  build-map:
 
     runs-on: ubuntu-latest
 
@@ -18,3 +18,31 @@ jobs:
       run:  jupyter nbconvert --to notebook --execute "NALZS MAP.ipynb"
     - name: Display html page
       run: ls zoo_map.html
+    - name: "Setup Pages"
+      if: github.ref == 'refs/heads/main'
+      uses: actions/configure-pages@v3
+
+    - name: Upload Artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: "./zoo_map.html"
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build-map
+    
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      # environment created automatically by GitHub
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
