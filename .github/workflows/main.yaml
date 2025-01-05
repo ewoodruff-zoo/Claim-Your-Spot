@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Install requirements
-      run: pip3 install -r scripts/requirements.txt --user
+      run: pip3 install -r requirements.txt --user
     - name: Template out website
       run:  jupyter nbconvert --to notebook --execute "NALZS MAP.ipynb"
     - name: Display html page
