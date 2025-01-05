@@ -13,8 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install requirements
-      run: sudo pip3 install -r requirements.txt
-    - name: Template out website
+      run: pip3 install -r requirements.txt --user
+    - name: Build map html file
       run:  jupyter nbconvert --to notebook --execute "NALZS MAP.ipynb"
     - name: Display html page
       run: ls zoo_map.html
