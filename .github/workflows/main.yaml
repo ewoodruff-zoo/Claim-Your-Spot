@@ -17,7 +17,7 @@ jobs:
     - name: Build map html file
       run:  jupyter nbconvert --to notebook --execute "NALZS MAP.ipynb"
     - name: Tar into folder
-      run: mkdir zoo_map && cp zoo_map.html zoo_map
+      run: mkdir zoo_map && cp zoo_map.html zoo_map && cp -r fonts zoo_map/fonts && cp -r images zoo_map/images && cp -r tiles zoo_map/tiles
     - name: "Setup Pages"
       if: github.ref == 'refs/heads/main'
       uses: actions/configure-pages@v3
